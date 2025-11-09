@@ -1,3 +1,4 @@
 title: Subnovel
 description: A web novel translation project.
 theme: minima
+baseurl: /subnovel
