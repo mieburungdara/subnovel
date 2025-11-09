@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <div class="container{% if page.collection == 'posts' %} chapter-page{% endif %}">
+        {{ content }}
+        <div class="post-navigation">
+            {% if page.previous.url %}
+                <a href="{{ page.previous.url }}" class="previous-chapter">Previous Chapter</a>
+            {% endif %}
+            {% if page.next.url %}
+                <a href="{{ page.next.url }}" class="next-chapter">Next Chapter</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="fab-container">
+        <button id="fabToggleBtn" class="fab-button">&#43;</button>
+        <button id="scrollToTopBtn" class="fab-child-button" title="Go to top">&#9650;</button>
+        <button id="scrollToBottomBtn" class="fab-child-button" title="Go to bottom">&#9660;</button>
+    </div>
+
+    <script src="/assets/js/scroll.js"></script>
+</body>
+</html>
