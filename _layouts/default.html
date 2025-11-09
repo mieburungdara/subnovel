@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/style.css">
+    <link rel="icon" href="{{ site.baseurl }}/favicon.ico">
 </head>
 <body>
     <div class="container{% if page.collection == 'posts' %} chapter-page{% endif %}">
@@ -28,6 +29,6 @@
         <button id="scrollToBottomBtn" class="fab-child-button" title="Go to bottom">&#9660;</button>
     </div>
 
-    <script src="/assets/js/scroll.js"></script>
+    <script src="{{ site.baseurl }}/assets/js/scroll.js"></script>
 </body>
 </html>
