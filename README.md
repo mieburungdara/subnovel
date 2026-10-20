@@ -15,6 +15,7 @@ Website terjemahan novel web "Subnovel" ([fenriralm.com](https://fenriralm.com))
 | `404.html` | Halaman "tidak ditemukan" |
 | `assets/style.css` | Seluruh gaya tampilan (light & dark mode, print) |
 | `assets/js/scroll.js` | Bottom bar: progres baca, navigasi cepat, dan gulir otomatis |
+| `assets/js/sidebar.js` | Sidebar daftar chapter dengan pencarian |
 | `assets/js/index.js` | Pencarian chapter di halaman utama |
 | `assets/favicon.svg`, `assets/og-image.png` | Ikon situs & gambar pratinjau media sosial |
 | `script/check-links.rb` | Pemeriksa tautan internal pada hasil build |

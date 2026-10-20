@@ -61,6 +61,57 @@
         {%- endif %}
     </main>
 
+    <div class="drawer-backdrop" data-drawer-backdrop></div>
+
+    <aside class="sidebar" id="chapterSidebar" data-sidebar aria-label="Daftar chapter">
+        <header class="sidebar-header">
+            <a class="sidebar-brand" href="{{ '/' | relative_url }}">
+                <span class="sidebar-brand-mark" aria-hidden="true">S</span>
+                <span class="sidebar-brand-name">{{ site.title }}</span>
+            </a>
+            <button type="button" class="sidebar-close" data-sidebar-close aria-label="Tutup daftar chapter">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </header>
+
+        <div class="sidebar-search">
+            <label class="visually-hidden" for="sidebar-search">Cari chapter di daftar</label>
+            <svg class="sidebar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-3.6-3.6"></path>
+            </svg>
+            <input id="sidebar-search" type="search" placeholder="Cari chapter&hellip;" autocomplete="off" spellcheck="false" data-sidebar-filter>
+        </div>
+
+        <a class="sidebar-home" href="{{ '/' | relative_url }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <path d="M9 22V12h6v10"></path>
+            </svg>
+            Beranda
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Navigasi chapter">
+            <ul class="sidebar-list" data-sidebar-list>
+                {%- for post in site.posts %}
+                {%- assign side_parts = post.title | split: ":" -%}
+                {%- assign side_first = side_parts | first -%}
+                {%- assign side_number = side_first | remove: "Chapter " | strip -%}
+                {%- assign side_name = post.title | remove_first: side_first | remove_first: ":" | strip -%}
+                {%- if side_name == "" -%}{%- assign side_name = side_first -%}{%- endif %}
+                <li>
+                    <a class="sidebar-item{% if post.url == page.url %} is-active{% endif %}" href="{{ post.url | relative_url }}" data-chapter="{{ side_number }}" data-title="{{ side_name | escape }}">
+                        <span class="sidebar-number">{{ side_number | escape }}</span>
+                        <span class="sidebar-name">{{ side_name | escape }}</span>
+                    </a>
+                </li>
+                {%- endfor %}
+            </ul>
+
+            <p class="sidebar-empty" data-sidebar-empty hidden>Tidak ada chapter yang cocok.</p>
+        </nav>
+    </aside>
+
     {%- assign current_number = page.title | split: ":" | first | remove: "Chapter " | strip -%}
     {%- assign latest_post = site.posts.first -%}
     <div class="bottom-bar{% if page.wide %} bottom-bar--wide{% endif %}" data-bottom-bar>
@@ -89,10 +140,10 @@
             </a>
             {%- endif %}
 
-            <p class="bottom-bar-current">
-                <span class="bottom-bar-value">{% if is_chapter %}<span class="bottom-bar-word">Chapter </span>{{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}</span>
+            <button type="button" class="bottom-bar-current" data-sidebar-open aria-haspopup="dialog" aria-controls="chapterSidebar" aria-label="Pilih chapter">
+                <span class="bottom-bar-value">{% if is_chapter %}<span class="bottom-bar-word">Chapter </span>{{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}<span class="bottom-bar-caret" aria-hidden="true">&#9662;</span></span>
                 <span class="bottom-bar-percent" data-progress-label>0%</span>
-            </p>
+            </button>
 
             {%- if is_chapter %}
                 {%- if page.next %}
@@ -120,6 +171,12 @@
             {%- endif %}
 
             <div class="bottom-bar-tools">
+                <a class="bottom-bar-tool" href="{{ '/' | relative_url }}" aria-label="Beranda" title="Beranda">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <path d="M9 22V12h6v10"></path>
+                    </svg>
+                </a>
                 <button type="button" class="bottom-bar-tool" data-scroll-bottom aria-label="Turun ke bawah" title="Turun ke bawah">
                     <span aria-hidden="true">&darr;</span>
                 </button>
@@ -137,6 +194,7 @@
     </div>
 
     <script src="{{ '/assets/js/scroll.js' | relative_url }}?v={{ asset_version }}" defer></script>
+    <script src="{{ '/assets/js/sidebar.js' | relative_url }}?v={{ asset_version }}" defer></script>
     {%- for script in page.scripts %}
     <script src="{{ script | relative_url }}?v={{ asset_version }}" defer></script>
     {%- endfor %}
