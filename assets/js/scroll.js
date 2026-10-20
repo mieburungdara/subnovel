@@ -18,7 +18,7 @@
         return;
     }
 
-    var SPEEDS = [20, 50, 120];
+    var SPEEDS = [35, 80, 180];
     var SPEED_LABELS = ["1\u00d7", "2\u00d7", "4\u00d7"];
     var SPEED_NAMES = ["lambat", "sedang", "cepat"];
 
@@ -65,14 +65,26 @@
     }
 
     function scrollToPosition(position, smooth) {
-        var behavior = smooth && !reducedMotion.matches ? "smooth" : "instant";
+        var behavior = smooth && !reducedMotion.matches ? "smooth" : "auto";
 
         if ("scrollBehavior" in document.documentElement.style) {
-            window.scrollTo({ top: position, behavior: behavior });
-            return;
+            try {
+                window.scrollTo({ top: position, behavior: behavior });
+                return;
+            } catch (error) {
+                /* older engines reject unknown behaviour values */
+            }
         }
 
         window.scrollTo(0, position);
+    }
+
+    function scrollBy(delta) {
+        try {
+            window.scrollTo({ top: window.scrollY + delta, behavior: "auto" });
+        } catch (error) {
+            window.scrollTo(0, window.scrollY + delta);
+        }
     }
 
     function updateSpeedButton() {
@@ -133,7 +145,13 @@
             return;
         }
 
-        window.scrollTo({ top: next, behavior: "instant" });
+        try {
+            scrollBy(SPEEDS[speedIndex] * delta);
+        } catch (error) {
+            stopAutoScroll();
+            return;
+        }
+
         autoScroll.frame = window.requestAnimationFrame(autoScrollStep);
     }
 
