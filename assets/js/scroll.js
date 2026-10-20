@@ -11,8 +11,6 @@
     var autoIcon = document.querySelector("[data-auto-scroll-icon]");
     var speedButton = document.querySelector("[data-speed-cycle]");
     var speedLabel = document.querySelector("[data-speed-label]");
-    var searchButton = document.querySelector("[data-focus-search]");
-    var searchInput = document.querySelector("[data-filter-input]");
 
     if (!bar) {
         return;
@@ -206,15 +204,6 @@
         speedButton.addEventListener("click", function () {
             speedIndex = (speedIndex + 1) % SPEEDS.length;
             updateSpeedButton();
-        });
-    }
-
-    if (searchButton && searchInput) {
-        searchButton.hidden = false;
-        searchButton.addEventListener("click", function () {
-            scrollToPosition(0, true);
-            searchInput.focus();
-            searchInput.select();
         });
     }
 
