@@ -619,26 +619,28 @@ a {
 .bottom-bar-link {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.6rem;
     min-width: 0;
-    padding: 0.4rem 0.6rem;
-    border: none;
-    border-radius: 10px;
-    background: none;
+    padding: 0.4rem 0.8rem 0.4rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--surface-muted);
     color: var(--text);
     font: inherit;
     text-align: left;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--transition), color var(--transition);
+    transition: border-color var(--transition), background-color var(--transition), color var(--transition);
 }
 
 .bottom-bar-link:hover {
-    background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: var(--accent);
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--surface-muted));
 }
 
 .bottom-bar-link--next {
     justify-content: flex-end;
+    padding: 0.4rem 0.45rem 0.4rem 0.8rem;
     text-align: right;
 }
 
@@ -647,8 +649,13 @@ a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent);
-    font-size: 1rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: var(--on-accent);
+    font-size: 0.8rem;
+    font-weight: 700;
     line-height: 1;
 }
 
@@ -659,16 +666,17 @@ a {
 }
 
 .bottom-bar-eyebrow {
-    font-size: 0.62rem;
-    font-weight: 600;
+    font-size: 0.63rem;
+    font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--text-muted);
 }
 
 .bottom-bar-title {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -678,27 +686,29 @@ a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.1rem;
+    gap: 0.05rem;
     margin: 0;
-    padding: 0.2rem 0.5rem;
-    border: none;
-    border-radius: 10px;
-    background: none;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--surface-muted);
     color: var(--text);
     font: inherit;
     text-align: center;
     cursor: pointer;
-    transition: background-color var(--transition);
+    transition: border-color var(--transition), background-color var(--transition);
 }
 
 .bottom-bar-current:hover {
-    background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: var(--accent);
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--surface-muted));
 }
 
 .bottom-bar-caret {
-    margin-left: 0.15rem;
-    font-size: 0.72em;
-    color: var(--text-muted);
+    margin-left: 0.25rem;
+    font-size: 0.85em;
+    line-height: 1;
+    color: var(--accent);
 }
 
 .bottom-bar-value {
@@ -725,21 +735,25 @@ a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border: 1px solid var(--border);
     border-radius: 50%;
-    background-color: color-mix(in srgb, var(--surface) 70%, transparent);
+    background-color: var(--surface-muted);
     color: var(--accent);
     font: inherit;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--text) 10%, transparent);
     transition: background-color var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
 }
 
 .bottom-bar-tool:hover {
     border-color: var(--accent);
+    background-color: var(--accent);
+    color: var(--on-accent);
     transform: translateY(-2px);
 }
 
