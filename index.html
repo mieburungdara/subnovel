@@ -9,19 +9,24 @@ description: Daftar seluruh chapter Subnovel, diurutkan dari chapter terbaru.
     <p class="index-count">{{ site.posts | size }} chapter tersedia</p>
 </header>
 
+{%- if site.posts.size > 0 %}
 <ul class="chapter-list">
-    {% for post in site.posts %}
+    {%- for post in site.posts %}
     {%- assign title_parts = post.title | split: ":" -%}
-    {%- assign chapter_number = title_parts | first | remove: "Chapter " | strip -%}
-    {%- assign chapter_name = title_parts | slice: 1 | join: ":" | strip -%}
+    {%- assign first_part = title_parts | first -%}
+    {%- assign chapter_number = first_part | remove: "Chapter " | strip -%}
+    {%- assign chapter_name = post.title | remove_first: first_part | remove_first: ":" | strip -%}
     {%- if chapter_name == "" -%}
-        {%- assign chapter_name = title_parts | first -%}
+        {%- assign chapter_name = first_part -%}
     {%- endif %}
     <li class="chapter-item">
         <a href="{{ post.url | relative_url }}">
-            <span class="chapter-number">{{ chapter_number | escape }}</span>
+            <span class="chapter-number"><span class="visually-hidden">Chapter </span>{{ chapter_number | escape }}</span>
             <span class="chapter-name">{{ chapter_name | escape }}</span>
         </a>
     </li>
-    {% endfor %}
+    {%- endfor %}
 </ul>
+{%- else %}
+<p class="index-empty">Belum ada chapter yang dipublikasikan.</p>
+{%- endif %}

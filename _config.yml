@@ -3,12 +3,15 @@ description: Proyek terjemahan novel web ke dalam bahasa Indonesia.
 lang: id
 url: https://mieburungdara.github.io
 baseurl: /subnovel
-theme: minima
 markdown: kramdown
 kramdown:
   input: GFM
   hard_wrap: false
   syntax_highlighter: rouge
+plugins:
+  - jekyll-feed
+feed:
+  posts_limit: 20
 defaults:
   - scope:
       path: ""
@@ -17,7 +20,6 @@ defaults:
       layout: default
 exclude:
   - chapter/
-  - debug_screenshot.png
   - GEMINI.md
   - README.md
   - script/

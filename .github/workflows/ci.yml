@@ -34,6 +34,9 @@ jobs:
           JEKYLL_ENV: production
         run: bundle exec jekyll build --trace --strict_front_matter --destination tmp/site
 
+      - name: Check content conventions
+        run: bash script/check-content.sh tmp/site
+
       - name: Check internal links
         run: ruby script/check-links.rb tmp/site
 
