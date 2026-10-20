@@ -55,36 +55,72 @@
             {%- endif %}
             {{ content }}
         </article>
-
-        {%- if page.previous or page.next %}
-        <nav class="post-navigation" aria-label="Navigasi chapter">
-            {%- if page.previous %}
-            <a class="nav-link nav-link--previous" href="{{ page.previous.url | relative_url }}" rel="prev">
-                <span class="nav-direction">&larr; Chapter sebelumnya</span>
-                <span class="nav-title">{{ page.previous.title | escape }}</span>
-            </a>
-            {%- endif %}
-            {%- if page.next %}
-            <a class="nav-link nav-link--next" href="{{ page.next.url | relative_url }}" rel="next">
-                <span class="nav-direction">Chapter berikutnya &rarr;</span>
-                <span class="nav-title">{{ page.next.title | escape }}</span>
-            </a>
-            {%- endif %}
-        </nav>
-        {%- endif %}
         {%- else %}
         {{ content }}
         {%- endif %}
     </main>
 
-    <div class="fab-container" data-open="false">
-        <button type="button" class="fab-button is-hidden" aria-expanded="false" aria-controls="fabMenu" aria-label="Buka pintasan navigasi">
-            <span class="fab-icon fab-icon--open" aria-hidden="true">+</span>
-            <span class="fab-icon fab-icon--close" aria-hidden="true">&times;</span>
-        </button>
-        <div id="fabMenu" class="fab-menu" role="group" aria-label="Pintasan navigasi">
-            <button type="button" class="fab-child-button" data-action="top" aria-label="Gulir ke atas">&#9650;</button>
-            <button type="button" class="fab-child-button" data-action="bottom" aria-label="Gulir ke bawah">&#9660;</button>
+    {%- assign current_number = page.title | split: ":" | first | remove: "Chapter " | strip -%}
+    {%- assign latest_post = site.posts.first -%}
+    <div class="bottom-bar{% if page.wide %} bottom-bar--wide{% endif %}" data-bottom-bar>
+        <div class="bottom-bar-progress" role="progressbar" aria-label="Kemajuan baca" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-bottom-bar-progress>
+            <span class="bottom-bar-fill" data-progress-fill></span>
+        </div>
+
+        <div class="bottom-bar-inner">
+            {%- if is_chapter %}
+                {%- if page.previous %}
+            <a class="bottom-bar-link bottom-bar-link--previous" href="{{ page.previous.url | relative_url }}" rel="prev">
+                <span class="bottom-bar-arrow" aria-hidden="true">&larr;</span>
+                <span class="bottom-bar-text">
+                    <span class="bottom-bar-eyebrow">Sebelumnya</span>
+                    <span class="bottom-bar-title"><span class="bottom-bar-word">Chapter </span>{{ page.previous.title | split: ":" | first | remove: "Chapter " | strip | escape }}</span>
+                </span>
+            </a>
+                {%- endif %}
+            {%- elsif latest_post %}
+            <a class="bottom-bar-link bottom-bar-link--previous" href="{{ latest_post.url | relative_url }}">
+                <span class="bottom-bar-arrow" aria-hidden="true">&rarr;</span>
+                <span class="bottom-bar-text">
+                    <span class="bottom-bar-eyebrow">Terbaru</span>
+                    <span class="bottom-bar-title"><span class="bottom-bar-word">Chapter </span>{{ latest_post.title | split: ":" | first | remove: "Chapter " | strip | escape }}</span>
+                </span>
+            </a>
+            {%- endif %}
+
+            <p class="bottom-bar-current">
+                <span class="bottom-bar-value">{% if is_chapter %}Chapter {{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}</span>
+                <span class="bottom-bar-percent" data-progress-label>0%</span>
+            </p>
+
+            {%- if is_chapter %}
+                {%- if page.next %}
+            <a class="bottom-bar-link bottom-bar-link--next" href="{{ page.next.url | relative_url }}" rel="next">
+                <span class="bottom-bar-text">
+                    <span class="bottom-bar-eyebrow">Berikutnya</span>
+                    <span class="bottom-bar-title"><span class="bottom-bar-word">Chapter </span>{{ page.next.title | split: ":" | first | remove: "Chapter " | strip | escape }}</span>
+                </span>
+                <span class="bottom-bar-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+                {%- endif %}
+            {%- else %}
+            <button type="button" class="bottom-bar-link bottom-bar-link--next" data-focus-search hidden>
+                <span class="bottom-bar-text">
+                    <span class="bottom-bar-eyebrow">Cari</span>
+                    <span class="bottom-bar-title">Chapter</span>
+                </span>
+                <span class="bottom-bar-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m20 20-3.6-3.6"></path>
+                    </svg>
+                </span>
+            </button>
+            {%- endif %}
+
+            <button type="button" class="bottom-bar-top" data-scroll-top aria-label="Gulir ke atas" title="Gulir ke atas">
+                <span aria-hidden="true">&uarr;</span>
+            </button>
         </div>
     </div>
 

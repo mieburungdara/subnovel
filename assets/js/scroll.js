@@ -1,113 +1,83 @@
 (function () {
     "use strict";
 
-    var SCROLL_THRESHOLD = 20;
+    var bar = document.querySelector("[data-bottom-bar]");
+    var fill = document.querySelector("[data-progress-fill]");
+    var progress = document.querySelector("[data-bottom-bar-progress]");
+    var percentLabel = document.querySelector("[data-progress-label]");
+    var topButton = document.querySelector("[data-scroll-top]");
+    var searchButton = document.querySelector("[data-focus-search]");
+    var searchInput = document.querySelector("[data-filter-input]");
 
-    function init() {
-        var container = document.querySelector(".fab-container");
-        if (!container) {
+    if (!bar) {
+        return;
+    }
+
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var ticking = false;
+
+    function updateProgress() {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - window.innerHeight;
+        var ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        var percent = Math.round(ratio * 100);
+
+        if (fill) {
+            fill.style.width = percent + "%";
+        }
+
+        if (progress) {
+            progress.setAttribute("aria-valuenow", String(percent));
+        }
+
+        if (percentLabel) {
+            percentLabel.textContent = percent + "%";
+        }
+    }
+
+    function handleScroll() {
+        if (ticking) {
             return;
         }
 
-        var toggleButton = container.querySelector(".fab-button");
-        var topButton = container.querySelector('[data-action="top"]');
-        var bottomButton = container.querySelector('[data-action="bottom"]');
+        ticking = true;
+        window.requestAnimationFrame(function () {
+            try {
+                updateProgress();
+            } finally {
+                ticking = false;
+            }
+        });
+    }
 
-        if (!toggleButton) {
+    function scrollToPosition(position) {
+        if ("scrollBehavior" in document.documentElement.style) {
+            window.scrollTo({
+                top: position,
+                behavior: reducedMotion.matches ? "auto" : "smooth"
+            });
             return;
         }
 
-        var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-        var isOpen = false;
-        var scrollTicking = false;
-
-        function setOpen(open) {
-            if (isOpen === open) {
-                return;
-            }
-
-            isOpen = open;
-            container.setAttribute("data-open", String(open));
-            toggleButton.setAttribute("aria-expanded", String(open));
-            toggleButton.setAttribute("aria-label", open ? "Tutup pintasan navigasi" : "Buka pintasan navigasi");
-        }
-
-        function updateFabVisibility() {
-            var scrolled = window.scrollY > SCROLL_THRESHOLD;
-            toggleButton.classList.toggle("is-hidden", !scrolled);
-
-            if (!scrolled) {
-                setOpen(false);
-            }
-        }
-
-        function handleScroll() {
-            if (scrollTicking) {
-                return;
-            }
-
-            scrollTicking = true;
-            window.requestAnimationFrame(function () {
-                try {
-                    updateFabVisibility();
-                } finally {
-                    scrollTicking = false;
-                }
-            });
-        }
-
-        function scrollToPosition(position) {
-            if ("scrollBehavior" in document.documentElement.style) {
-                window.scrollTo({
-                    top: position,
-                    behavior: reducedMotion.matches ? "auto" : "smooth"
-                });
-                return;
-            }
-
-            window.scrollTo(0, position);
-        }
-
-        toggleButton.addEventListener("click", function () {
-            setOpen(!isOpen);
-        });
-
-        if (topButton) {
-            topButton.addEventListener("click", function () {
-                scrollToPosition(0);
-                setOpen(false);
-            });
-        }
-
-        if (bottomButton) {
-            bottomButton.addEventListener("click", function () {
-                scrollToPosition(document.documentElement.scrollHeight);
-                setOpen(false);
-            });
-        }
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && isOpen && container.contains(document.activeElement)) {
-                setOpen(false);
-                toggleButton.focus();
-            }
-        });
-
-        document.addEventListener("click", function (event) {
-            if (isOpen && !container.contains(event.target)) {
-                setOpen(false);
-            }
-        });
-
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("resize", handleScroll, { passive: true });
-
-        updateFabVisibility();
+        window.scrollTo(0, position);
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-    } else {
-        init();
+    if (topButton) {
+        topButton.addEventListener("click", function () {
+            scrollToPosition(0);
+        });
     }
+
+    if (searchButton && searchInput) {
+        searchButton.hidden = false;
+        searchButton.addEventListener("click", function () {
+            scrollToPosition(0);
+            searchInput.focus();
+            searchInput.select();
+        });
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+
+    updateProgress();
 })();
