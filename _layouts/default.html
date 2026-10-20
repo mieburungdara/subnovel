@@ -47,7 +47,7 @@
 <body>
     <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 
-    <main id="main-content" tabindex="-1" class="container{% if is_chapter %} chapter-page{% else %} site-page{% endif %}">
+    <main id="main-content" tabindex="-1" class="container{% if is_chapter %} chapter-page{% elsif page.wide %} container--wide{% else %} site-page{% endif %}">
         {%- if is_chapter %}
         <article class="chapter">
             {%- if has_title %}
@@ -89,5 +89,8 @@
     </div>
 
     <script src="{{ '/assets/js/scroll.js' | relative_url }}" defer></script>
+    {%- for script in page.scripts %}
+    <script src="{{ script | relative_url }}" defer></script>
+    {%- endfor %}
 </body>
 </html>
