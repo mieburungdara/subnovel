@@ -12,7 +12,7 @@ kramdown:
 # Setiap novel adalah satu collection. Tambahkan folder baru di _<slug>/
 # dan daftarkan slug-nya di bawah `novels` untuk menampilkannya di beranda.
 collections:
-  subnovel:
+  absolute-regression:
     output: true
     permalink: /:year/:month/:day/:title.html
   novel-dua:
@@ -20,11 +20,11 @@ collections:
     permalink: /novel-dua/:year/:month/:day/:title.html
 
 novels:
-  subnovel:
-    title: Subnovel
-    description: Terjemahan novel web Subnovel ke dalam bahasa Indonesia.
+  absolute-regression:
+    title: Absolute Regression
+    description: Terjemahan novel web Absolute Regression ke dalam bahasa Indonesia.
     source: https://fenriralm.com
-    path: /subnovel/
+    path: /absolute-regression/
     feed: /feed.xml
   novel-dua:
     title: Novel Dua
@@ -39,7 +39,7 @@ plugins:
 feed:
   posts_limit: 20
   collections:
-    subnovel:
+    absolute-regression:
       path: /feed.xml
     novel-dua:
       path: /novel-dua/feed.xml
@@ -49,7 +49,7 @@ feed:
 defaults:
   - scope:
       path: ""
-      type: subnovel
+      type: absolute-regression
     values:
       layout: default
   - scope:

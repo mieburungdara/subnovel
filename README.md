@@ -9,7 +9,7 @@ halaman daftar chapter, dan feed Atom-nya sendiri.
 
 | Path | Isi |
 | --- | --- |
-| `_subnovel/` | Chapter novel "Subnovel" (collection `subnovel`) |
+| `_absolute-regression/` | Chapter novel "Absolute Regression" (collection `absolute-regression`) |
 | `_novel-dua/` | Chapter novel kedua (collection `novel-dua`) — contoh novel tambahan |
 | `chapter/<slug>/done/` | Teks sumber chapter yang sudah selesai dikerjakan |
 | `chapter/<slug>/undone/` | Teks sumber chapter yang belum dipublikasikan |
@@ -85,8 +85,17 @@ ruby script/check-links.rb _site
 4. Buat tracker-nya: `chapter/<slug>/done/` dan `chapter/<slug>/undone/`.
 5. Tambahkan chapter dengan nama file `YYYY-MM-DD-chapter-N.md` di `_<slug>/`.
 
-Novel otomatis muncul di sidebar (pemilih novel), di halaman `/novels/`, dan di section
-"Novel Lain" pada halaman daftar chapter.
+Novel otomatis muncul di sidebar (pemilih novel), di beranda, dan sebagai section "Chapter terbaru"
+di beranda.
+
+## Peta halaman
+
+| Halaman | URL |
+| --- | --- |
+| Beranda: daftar semua novel + chapter terbaru | `/` |
+| Daftar chapter "Absolute Regression" | `/absolute-regression/` |
+| Daftar chapter novel kedua | `/novel-dua/` |
+| Chapter (URL tidak berubah) | `/2025/11/09/chapter-241.html` |
 
 ## Menambahkan chapter
 
