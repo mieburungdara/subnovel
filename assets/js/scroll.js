@@ -6,6 +6,11 @@
     var progress = document.querySelector("[data-bottom-bar-progress]");
     var percentLabel = document.querySelector("[data-progress-label]");
     var topButton = document.querySelector("[data-scroll-top]");
+    var bottomButton = document.querySelector("[data-scroll-bottom]");
+    var autoButton = document.querySelector("[data-auto-scroll]");
+    var autoIcon = document.querySelector("[data-auto-scroll-icon]");
+    var speedButton = document.querySelector("[data-speed-cycle]");
+    var speedLabel = document.querySelector("[data-speed-label]");
     var searchButton = document.querySelector("[data-focus-search]");
     var searchInput = document.querySelector("[data-filter-input]");
 
@@ -13,12 +18,21 @@
         return;
     }
 
+    var SPEEDS = [20, 50, 120];
+    var SPEED_LABELS = ["1\u00d7", "2\u00d7", "4\u00d7"];
+    var SPEED_NAMES = ["lambat", "sedang", "cepat"];
+
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     var ticking = false;
+    var speedIndex = 0;
+    var autoScroll = { active: false, frame: null, last: 0 };
+
+    function maxScroll() {
+        return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    }
 
     function updateProgress() {
-        var doc = document.documentElement;
-        var max = doc.scrollHeight - window.innerHeight;
+        var max = maxScroll();
         var ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
         var percent = Math.round(ratio * 100);
 
@@ -50,34 +64,148 @@
         });
     }
 
-    function scrollToPosition(position) {
+    function scrollToPosition(position, smooth) {
+        var behavior = smooth && !reducedMotion.matches ? "smooth" : "instant";
+
         if ("scrollBehavior" in document.documentElement.style) {
-            window.scrollTo({
-                top: position,
-                behavior: reducedMotion.matches ? "auto" : "smooth"
-            });
+            window.scrollTo({ top: position, behavior: behavior });
             return;
         }
 
         window.scrollTo(0, position);
     }
 
+    function updateSpeedButton() {
+        if (speedLabel) {
+            speedLabel.textContent = SPEED_LABELS[speedIndex];
+        }
+
+        if (speedButton) {
+            speedButton.setAttribute(
+                "aria-label",
+                "Kecepatan gulir otomatis " + (speedIndex + 1) + " kali, " + SPEED_NAMES[speedIndex]
+            );
+        }
+    }
+
+    function stopAutoScroll() {
+        if (!autoScroll.active) {
+            return;
+        }
+
+        autoScroll.active = false;
+        autoScroll.last = 0;
+
+        if (autoScroll.frame) {
+            window.cancelAnimationFrame(autoScroll.frame);
+            autoScroll.frame = null;
+        }
+
+        if (autoButton) {
+            autoButton.setAttribute("aria-pressed", "false");
+            autoButton.setAttribute("aria-label", "Gulir otomatis");
+            autoButton.setAttribute("title", "Gulir otomatis");
+        }
+
+        if (autoIcon) {
+            autoIcon.innerHTML = "&#9654;";
+        }
+    }
+
+    function autoScrollStep(timestamp) {
+        if (!autoScroll.active) {
+            return;
+        }
+
+        if (!autoScroll.last) {
+            autoScroll.last = timestamp;
+        }
+
+        var delta = Math.min(0.1, (timestamp - autoScroll.last) / 1000);
+        autoScroll.last = timestamp;
+
+        var max = maxScroll();
+        var next = window.scrollY + SPEEDS[speedIndex] * delta;
+
+        if (next >= max) {
+            window.scrollTo(0, max);
+            stopAutoScroll();
+            return;
+        }
+
+        window.scrollTo({ top: next, behavior: "instant" });
+        autoScroll.frame = window.requestAnimationFrame(autoScrollStep);
+    }
+
+    function startAutoScroll() {
+        if (maxScroll() <= 0) {
+            return;
+        }
+
+        autoScroll.active = true;
+        autoScroll.last = 0;
+
+        if (autoButton) {
+            autoButton.setAttribute("aria-pressed", "true");
+            autoButton.setAttribute("aria-label", "Hentikan gulir otomatis");
+            autoButton.setAttribute("title", "Hentikan gulir otomatis");
+        }
+
+        if (autoIcon) {
+            autoIcon.innerHTML = "&#10074;&#10074;";
+        }
+
+        autoScroll.frame = window.requestAnimationFrame(autoScrollStep);
+    }
+
+    function toggleAutoScroll() {
+        if (autoScroll.active) {
+            stopAutoScroll();
+        } else {
+            startAutoScroll();
+        }
+    }
+
     if (topButton) {
         topButton.addEventListener("click", function () {
-            scrollToPosition(0);
+            stopAutoScroll();
+            scrollToPosition(0, true);
+        });
+    }
+
+    if (bottomButton) {
+        bottomButton.addEventListener("click", function () {
+            stopAutoScroll();
+            scrollToPosition(maxScroll(), false);
+        });
+    }
+
+    if (autoButton) {
+        autoButton.addEventListener("click", toggleAutoScroll);
+    }
+
+    if (speedButton) {
+        speedButton.addEventListener("click", function () {
+            speedIndex = (speedIndex + 1) % SPEEDS.length;
+            updateSpeedButton();
         });
     }
 
     if (searchButton && searchInput) {
         searchButton.hidden = false;
         searchButton.addEventListener("click", function () {
-            scrollToPosition(0);
+            scrollToPosition(0, true);
             searchInput.focus();
             searchInput.select();
         });
     }
+
+    document.addEventListener("wheel", stopAutoScroll, { passive: true });
+    document.addEventListener("touchstart", stopAutoScroll, { passive: true });
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
 
+    updateSpeedButton();
     updateProgress();
 })();

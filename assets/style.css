@@ -696,27 +696,62 @@ a {
     font-variant-numeric: tabular-nums;
 }
 
-.bottom-bar-top {
+.bottom-bar-tools {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: 0.35rem;
+}
+
+.bottom-bar-tool {
     flex: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 38px;
     height: 38px;
-    margin-left: 0.35rem;
     border: 1px solid var(--border);
     border-radius: 50%;
     background-color: color-mix(in srgb, var(--surface) 70%, transparent);
     color: var(--accent);
     font: inherit;
     font-size: 1rem;
+    line-height: 1;
     cursor: pointer;
-    transition: background-color var(--transition), border-color var(--transition), transform var(--transition);
+    transition: background-color var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
 }
 
-.bottom-bar-top:hover {
+.bottom-bar-tool:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
+}
+
+.bottom-bar-tool--speed {
+    width: auto;
+    min-width: 38px;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.bottom-bar-tool[aria-pressed='true'] {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    color: var(--on-accent);
+    animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+
+    50% {
+        box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
+    }
 }
 
 @media (min-width: 900px) {
@@ -748,7 +783,24 @@ a {
     }
 
     .bottom-bar-value {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
+    }
+
+    .bottom-bar-tool {
+        width: 34px;
+        height: 34px;
+        font-size: 0.9rem;
+    }
+
+    .bottom-bar-tool--speed {
+        min-width: 34px;
+        padding: 0 0.4rem;
+        font-size: 0.72rem;
+    }
+
+    .bottom-bar-tools {
+        gap: 0.25rem;
+        margin-left: 0.15rem;
     }
 }
 

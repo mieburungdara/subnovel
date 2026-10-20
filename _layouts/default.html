@@ -89,7 +89,7 @@
             {%- endif %}
 
             <p class="bottom-bar-current">
-                <span class="bottom-bar-value">{% if is_chapter %}Chapter {{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}</span>
+                <span class="bottom-bar-value">{% if is_chapter %}<span class="bottom-bar-word">Chapter </span>{{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}</span>
                 <span class="bottom-bar-percent" data-progress-label>0%</span>
             </p>
 
@@ -118,9 +118,20 @@
             </button>
             {%- endif %}
 
-            <button type="button" class="bottom-bar-top" data-scroll-top aria-label="Gulir ke atas" title="Gulir ke atas">
-                <span aria-hidden="true">&uarr;</span>
-            </button>
+            <div class="bottom-bar-tools">
+                <button type="button" class="bottom-bar-tool" data-scroll-bottom aria-label="Turun ke bawah" title="Turun ke bawah">
+                    <span aria-hidden="true">&darr;</span>
+                </button>
+                <button type="button" class="bottom-bar-tool" data-auto-scroll aria-pressed="false" aria-label="Gulir otomatis" title="Gulir otomatis">
+                    <span class="bottom-bar-tool-icon" data-auto-scroll-icon aria-hidden="true">&#9654;</span>
+                </button>
+                <button type="button" class="bottom-bar-tool bottom-bar-tool--speed" data-speed-cycle aria-label="Kecepatan gulir otomatis 1 kali" title="Kecepatan gulir otomatis">
+                    <span data-speed-label>1&times;</span>
+                </button>
+                <button type="button" class="bottom-bar-tool" data-scroll-top aria-label="Gulir ke atas" title="Gulir ke atas">
+                    <span aria-hidden="true">&uarr;</span>
+                </button>
+            </div>
         </div>
     </div>
 
