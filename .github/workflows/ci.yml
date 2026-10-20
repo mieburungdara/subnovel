@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+
+  pull_request:
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "ci-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Build with Jekyll
+        env:
+          JEKYLL_ENV: production
+        run: bundle exec jekyll build --trace --strict_front_matter --destination tmp/site
+
+      - name: Check internal links
+        run: ruby script/check-links.rb tmp/site
+
+      - name: Verify every post was rendered
+        run: |
+          posts=$(find _posts -name '*.md' | wc -l)
+          pages=$(grep -rl 'class="chapter"' tmp/site --include='*.html' | wc -l)
+          if [ "$posts" -ne "$pages" ]; then
+            echo "Expected $posts rendered chapters, found $pages"
+            exit 1
+          fi
+          echo "OK: $posts chapters rendered"
+
+      - name: Check chapter bodies
+        run: |
+          missing=0
+          for page in $(grep -rl 'class="chapter"' tmp/site --include='*.html'); do
+            grep -q 'class="credits"' "$page" || { echo "Missing credits block: $page"; missing=$((missing + 1)); }
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Found $missing chapters without a credits block"
+            exit 1
+          fi
+          echo "OK: every chapter renders its credits block"

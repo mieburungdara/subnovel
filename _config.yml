@@ -1,4 +1,25 @@
 title: Subnovel
-description: A web novel translation project.
-theme: minima
+description: Proyek terjemahan novel web ke dalam bahasa Indonesia.
+lang: id
+url: https://mieburungdara.github.io
 baseurl: /subnovel
+theme: minima
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: default
+exclude:
+  - chapter/
+  - debug_screenshot.png
+  - GEMINI.md
+  - README.md
+  - script/
+  - tmp/
+  - vendor/

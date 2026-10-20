@@ -1,13 +1,27 @@
 ---
 layout: default
 title: Daftar Chapter
+description: Daftar seluruh chapter Subnovel, diurutkan dari chapter terbaru.
 ---
 
-<div class="container index-page">
+<header class="index-header">
     <h1>{{ site.title }}</h1>
-    <ul>
-        {% for post in site.posts %}
-        <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
+    <p class="index-count">{{ site.posts | size }} chapter tersedia</p>
+</header>
+
+<ul class="chapter-list">
+    {% for post in site.posts %}
+    {%- assign title_parts = post.title | split: ":" -%}
+    {%- assign chapter_number = title_parts | first | remove: "Chapter " | strip -%}
+    {%- assign chapter_name = title_parts | slice: 1 | join: ":" | strip -%}
+    {%- if chapter_name == "" -%}
+        {%- assign chapter_name = title_parts | first -%}
+    {%- endif %}
+    <li class="chapter-item">
+        <a href="{{ post.url | relative_url }}">
+            <span class="chapter-number">{{ chapter_number | escape }}</span>
+            <span class="chapter-name">{{ chapter_name | escape }}</span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>

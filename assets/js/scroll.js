@@ -1,53 +1,85 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var fabToggleBtn = document.getElementById("fabToggleBtn");
-    var scrollTopBtn = document.getElementById("scrollToTopBtn");
-    var scrollBottomBtn = document.getElementById("scrollToBottomBtn");
-    var fabChildButtons = document.querySelectorAll('.fab-child-button');
+(function () {
+    "use strict";
 
-    let fabOpen = false;
+    var container = document.querySelector(".fab-container");
+    var toggleButton = document.getElementById("fabToggleBtn");
+    var topButton = document.getElementById("scrollToTopBtn");
+    var bottomButton = document.getElementById("scrollToBottomBtn");
 
-    function toggleFab() {
-        fabOpen = !fabOpen;
-        fabChildButtons.forEach(function(button) {
-            if (fabOpen) {
-                button.classList.add('show');
-            } else {
-                button.classList.remove('show');
-            }
+    if (!container || !toggleButton) {
+        return;
+    }
+
+    var SCROLL_THRESHOLD = 20;
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var isOpen = false;
+    var scrollTicking = false;
+
+    function setOpen(open) {
+        if (isOpen === open) {
+            return;
+        }
+
+        isOpen = open;
+        container.setAttribute("data-open", String(open));
+        toggleButton.setAttribute("aria-expanded", String(open));
+    }
+
+    function updateFabVisibility() {
+        var scrolled = window.scrollY > SCROLL_THRESHOLD;
+        toggleButton.classList.toggle("is-hidden", !scrolled);
+
+        if (scrolled) {
+            setOpen(false);
+        }
+    }
+
+    function handleScroll() {
+        if (scrollTicking) {
+            return;
+        }
+
+        scrollTicking = true;
+        window.requestAnimationFrame(function () {
+            updateFabVisibility();
+            scrollTicking = false;
         });
-        fabToggleBtn.textContent = fabOpen ? '✕' : '+'; // Change icon
     }
 
-    fabToggleBtn.addEventListener('click', toggleFab);
-
-    window.onscroll = function() {
-        scrollFunction();
-        if (fabOpen) {
-            toggleFab(); // Close FAB on scroll
-        }
-    };
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            fabToggleBtn.style.display = "flex"; // Show FAB toggle button
-        } else {
-            fabToggleBtn.style.display = "none"; // Hide FAB toggle button
-        }
+    function scrollToPosition(position) {
+        window.scrollTo({
+            top: position,
+            behavior: reducedMotion.matches ? "auto" : "smooth"
+        });
     }
 
-    scrollTopBtn.onclick = function() {
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-        if (fabOpen) toggleFab(); // Close FAB after action
-    }
-
-    scrollBottomBtn.onclick = function() {
-        window.scrollTo(0, document.body.scrollHeight);
-        if (fabOpen) toggleFab(); // Close FAB after action
-    }
-
-    // Initially hide child buttons
-    fabChildButtons.forEach(function(button) {
-        button.classList.remove('show');
+    toggleButton.addEventListener("click", function () {
+        setOpen(!isOpen);
     });
-});
+
+    if (topButton) {
+        topButton.addEventListener("click", function () {
+            scrollToPosition(0);
+            setOpen(false);
+        });
+    }
+
+    if (bottomButton) {
+        bottomButton.addEventListener("click", function () {
+            scrollToPosition(document.documentElement.scrollHeight);
+            setOpen(false);
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && isOpen) {
+            setOpen(false);
+            toggleButton.focus();
+        }
+    });
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+
+    updateFabVisibility();
+})();
