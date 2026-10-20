@@ -74,15 +74,6 @@
             </button>
         </header>
 
-        <div class="sidebar-search">
-            <label class="visually-hidden" for="sidebar-search">Cari chapter di daftar</label>
-            <svg class="sidebar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="m20 20-3.6-3.6"></path>
-            </svg>
-            <input id="sidebar-search" type="search" placeholder="Cari chapter&hellip;" autocomplete="off" spellcheck="false" data-sidebar-filter>
-        </div>
-
         <a class="sidebar-home" href="{{ '/' | relative_url }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -107,8 +98,6 @@
                 </li>
                 {%- endfor %}
             </ul>
-
-            <p class="sidebar-empty" data-sidebar-empty hidden>Tidak ada chapter yang cocok.</p>
         </nav>
     </aside>
 
@@ -171,12 +160,6 @@
             {%- endif %}
 
             <div class="bottom-bar-tools">
-                <a class="bottom-bar-tool" href="{{ '/' | relative_url }}" aria-label="Beranda" title="Beranda">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <path d="M9 22V12h6v10"></path>
-                    </svg>
-                </a>
                 <button type="button" class="bottom-bar-tool" data-scroll-bottom aria-label="Turun ke bawah" title="Turun ke bawah">
                     <span aria-hidden="true">&darr;</span>
                 </button>

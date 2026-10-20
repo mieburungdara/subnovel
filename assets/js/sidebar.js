@@ -5,15 +5,11 @@
     var backdrop = document.querySelector("[data-drawer-backdrop]");
     var openButton = document.querySelector("[data-sidebar-open]");
     var closeButton = document.querySelector("[data-sidebar-close]");
-    var filter = document.querySelector("[data-sidebar-filter]");
-    var list = document.querySelector("[data-sidebar-list]");
-    var empty = document.querySelector("[data-sidebar-empty]");
 
     if (!sidebar || !openButton) {
         return;
     }
 
-    var items = list ? Array.prototype.slice.call(list.querySelectorAll(".sidebar-item")) : [];
     var isOpen = false;
     var lastFocused = null;
 
@@ -49,10 +45,7 @@
         scrollActiveIntoView();
 
         window.requestAnimationFrame(function () {
-            if (filter) {
-                filter.focus();
-                filter.select();
-            } else if (closeButton) {
+            if (closeButton) {
                 closeButton.focus();
             }
         });
@@ -75,40 +68,6 @@
         }
     }
 
-    function applyFilter(raw) {
-        var query = raw.toLowerCase().trim();
-        var numberMatch = query.match(/^#?(\d+)$/);
-        var visible = 0;
-
-        items.forEach(function (item) {
-            var number = item.getAttribute("data-chapter") || "";
-            var title = (item.getAttribute("data-title") || "").toLowerCase();
-            var matches;
-
-            if (!query) {
-                matches = true;
-            } else if (numberMatch) {
-                matches = number === numberMatch[1];
-            } else {
-                matches = title.indexOf(query) !== -1 || number.indexOf(query) !== -1;
-            }
-
-            item.parentNode.hidden = !matches;
-
-            if (matches) {
-                visible += 1;
-            }
-        });
-
-        if (empty) {
-            empty.hidden = visible !== 0;
-        }
-
-        if (list) {
-            list.hidden = visible === 0;
-        }
-    }
-
     openButton.addEventListener("click", openSidebar);
 
     if (closeButton) {
@@ -126,23 +85,6 @@
             closeSidebar();
         }
     });
-
-    if (filter) {
-        filter.addEventListener("input", function (event) {
-            applyFilter(event.target.value);
-        });
-
-        filter.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                var first = list && list.querySelector(".sidebar-item:not([disabled])");
-
-                if (first) {
-                    event.preventDefault();
-                    first.click();
-                }
-            }
-        });
-    }
 
     document.addEventListener("keydown", function (event) {
         if (!isOpen) {
