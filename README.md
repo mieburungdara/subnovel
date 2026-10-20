@@ -24,8 +24,33 @@ halaman daftar chapter, dan feed Atom-nya sendiri.
 | `assets/js/index.js` | Pencarian chapter di halaman daftar chapter |
 | `script/check-links.rb` | Pemeriksa tautan internal pada hasil build |
 | `script/check-content.sh` | Pemeriksaan konvensi markdown chapter |
+| `script/sync-source-chapters.rb` | Sinkronisasi daftar chapter dari situs sumber |
 
 Folder `chapter/` hanya berisi materi kerja dan tidak ikut dipublikasikan.
+
+## Status terjemahan
+
+Novel "Absolute Regression" sumbernya ada di
+[fenrirealm.com/series/absolute-regression](https://fenrirealm.com/series/absolute-regression)
+dengan **896 chapter** (nomor 1..896, tanpa nomer yang bolong). Di repo ini:
+
+| Status | Chapter |
+| --- | --- |
+| Sudah dipublikasikan | 194..241 (48 chapter) |
+| Sudah ada file sumbernya (`chapter/absolute-regression/done`) | 199..241 |
+| Antrean terjemahan (`chapter/absolute-regression/undone`) | 242..323 |
+| Belum ada file sumbernya | 766 chapter (1..193 dan 324..896) |
+
+Daftar lengkap chapter beserta judul, tanggal rilis, dan URL sumbernya ada di
+`chapter/absolute-regression/source-chapters.json`, dan daftar chapter yang belum punya file
+sumber ada di `chapter/absolute-regression/missing-chapters.md`. Keduanya dibuat ulang dengan:
+
+```bash
+ruby script/sync-source-chapters.rb absolute-regression
+```
+
+Teks chapter sumber tidak diunduh otomatis karena situs sumber memverifikasi manusia; ambil teksnya
+dari URL yang tertera lalu simpan sebagai `chapter/absolute-regression/undone/<nomor>.txt`.
 
 ## Menjalankan secara lokal
 
