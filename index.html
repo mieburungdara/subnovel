@@ -32,7 +32,13 @@ wide: true
             </div>
             <div class="hero-stat">
                 <dt>Total chapter</dt>
-                <dd>{% assign total = 0 %}{% for pair in site.novels %}{% assign total = total | plus: site[pair[0]] | size %}{% endfor %}{{ total }}</dd>
+                <dd>{%- assign total = 0 -%}
+                    {%- for pair in site.novels -%}
+                        {%- assign pair_slug = pair[0] -%}
+                        {%- assign pair_count = site[pair_slug] | size -%}
+                        {%- assign total = total | plus: pair_count -%}
+                    {%- endfor -%}
+                    {{ total }}</dd>
             </div>
         </dl>
     </div>
