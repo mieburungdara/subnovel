@@ -8,16 +8,56 @@ kramdown:
   input: GFM
   hard_wrap: false
   syntax_highlighter: rouge
+
+# Setiap novel adalah satu collection. Tambahkan folder baru di _<slug>/
+# dan daftarkan slug-nya di bawah `novels` untuk menampilkannya di beranda.
+collections:
+  subnovel:
+    output: true
+    permalink: /:year/:month/:day/:title.html
+  novel-dua:
+    output: true
+    permalink: /novel-dua/:year/:month/:day/:title.html
+
+novels:
+  subnovel:
+    title: Subnovel
+    description: Terjemahan novel web Subnovel ke dalam bahasa Indonesia.
+    source: https://fenriralm.com
+    path: /
+    feed: /feed.xml
+  novel-dua:
+    title: Novel Dua
+    description: Ganti judul dan deskripsi novel ini di _config.yml.
+    source: ""
+    path: /novel-dua/
+    feed: /novel-dua/feed.xml
+
 plugins:
   - jekyll-feed
+
 feed:
   posts_limit: 20
+  collections:
+    subnovel:
+      path: /feed.xml
+    novel-dua:
+      path: /novel-dua/feed.xml
+    posts:
+      path: /posts.xml
+
 defaults:
   - scope:
       path: ""
-      type: posts
+      type: subnovel
     values:
       layout: default
+  - scope:
+      path: ""
+      type: novel-dua
+    values:
+      layout: default
+
 exclude:
   - chapter/
   - GEMINI.md

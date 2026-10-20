@@ -1,0 +1,57 @@
+---
+layout: default
+title: Daftar Novel
+description: Kumpulan terjemahan novel web ke dalam bahasa Indonesia.
+permalink: /novels/
+wide: true
+---
+
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-eyebrow">Koleksi terjemahan</p>
+        <h1 class="hero-title">{{ site.title }}</h1>
+        <p class="hero-lead">{{ site.description }}</p>
+
+        <dl class="hero-stats">
+            <div class="hero-stat">
+                <dt>Novel</dt>
+                <dd>{{ site.novels | size }}</dd>
+            </div>
+            <div class="hero-stat">
+                <dt>Total chapter</dt>
+                <dd>{% assign total = 0 %}{% for pair in site.novels %}{% assign total = total | plus: site[pair[0]] | size %}{% endfor %}{{ total }}</dd>
+            </div>
+        </dl>
+    </div>
+</section>
+
+<section class="chapter-section">
+    <header class="section-header">
+        <h2 class="section-title">Novel yang Diterjemahkan</h2>
+        <p class="section-count">{{ site.novels | size }} novel</p>
+    </header>
+
+    <ul class="novel-list">
+        {%- for pair in site.novels %}
+        {%- assign slug = pair[0] -%}
+        {%- assign meta = pair[1] -%}
+        {%- assign docs = site[slug] -%}
+        <li class="novel-item">
+            <a href="{{ meta.path | relative_url }}">
+                <span class="novel-cover" aria-hidden="true">{{ meta.title | slice: 0 | upcase }}</span>
+                <span class="novel-body">
+                    <span class="novel-title">{{ meta.title | escape }}</span>
+                    <span class="novel-description">{{ meta.description | escape }}</span>
+                    <span class="novel-meta">
+                        <span class="novel-count">{{ docs | size }} chapter</span>
+                        {%- if docs.size > 0 %}
+                        <span class="novel-latest">Terbaru: Chapter {{ docs.last.title | split: ":" | first | remove: "Chapter " | strip }}</span>
+                        {%- endif %}
+                    </span>
+                </span>
+                <span class="novel-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+        {%- endfor %}
+    </ul>
+</section>

@@ -1,23 +1,28 @@
 # Subnovel
 
-Website terjemahan novel web "Subnovel" ([fenriralm.com](https://fenriralm.com)), dibangun dengan
-[Jekyll](https://jekyllrb.com/) dan dipublikasikan ke GitHub Pages.
+Website terjemahan novel web ke dalam bahasa Indonesia, dibangun dengan
+[Jekyll](https://jekyllrb.com/) dan dipublikasikan ke GitHub Pages. Situs ini mendukung
+**lebih dari satu novel**: setiap novel adalah satu *collection* Jekyll dengan folder, tracker,
+halaman daftar chapter, dan feed Atom-nya sendiri.
 
 ## Struktur repositori
 
 | Path | Isi |
 | --- | --- |
-| `_posts/` | Chapter yang sudah dipublikasikan (format `YYYY-MM-DD-chapter-N.md`) |
-| `chapter/done/` | Teks sumber chapter yang sudah selesai dikerjakan |
-| `chapter/undone/` | Teks sumber chapter yang belum dipublikasikan |
-| `_layouts/default.html` | Layout utama: `<head>`, navigasi chapter, dan tombol gulir |
-| `index.html` | Halaman utama: hero, pencarian chapter, dan grid chapter |
+| `_subnovel/` | Chapter novel "Subnovel" (collection `subnovel`) |
+| `_novel-dua/` | Chapter novel kedua (collection `novel-dua`) — contoh novel tambahan |
+| `chapter/<slug>/done/` | Teks sumber chapter yang sudah selesai dikerjakan |
+| `chapter/<slug>/undone/` | Teks sumber chapter yang belum dipublikasikan |
+| `_layouts/default.html` | Layout utama: `<head>`, navigasi, sidebar, dan bottom bar |
+| `_layouts/novel.html` | Halaman daftar chapter sebuah novel (hero + pencarian) |
+| `index.html` | Beranda: daftar chapter novel utama |
+| `novels.html` | Halaman `/novels/` yang memuat seluruh novel |
+| `<slug>.html` | Halaman daftar chapter untuk novel tambahan |
 | `404.html` | Halaman "tidak ditemukan" |
 | `assets/style.css` | Seluruh gaya tampilan (light & dark mode, print) |
 | `assets/js/scroll.js` | Bottom bar: progres baca, navigasi cepat, dan gulir otomatis |
-| `assets/js/sidebar.js` | Sidebar daftar chapter dengan pencarian |
-| `assets/js/index.js` | Pencarian chapter di halaman utama |
-| `assets/favicon.svg`, `assets/og-image.png` | Ikon situs & gambar pratinjau media sosial |
+| `assets/js/sidebar.js` | Sidebar daftar chapter + pemilih novel |
+| `assets/js/index.js` | Pencarian chapter di halaman daftar chapter |
 | `script/check-links.rb` | Pemeriksa tautan internal pada hasil build |
 | `script/check-content.sh` | Pemeriksaan konvensi markdown chapter |
 
@@ -39,10 +44,56 @@ bash script/check-content.sh _site
 ruby script/check-links.rb _site
 ```
 
+## Menambahkan novel baru
+
+1. Buat folder collection `_<slug>/` (misal `_novel-dua/`).
+2. Daftarkan slug itu di `_config.yml`:
+
+   ```yaml
+   collections:
+     novel-dua:
+       output: true
+       permalink: /novel-dua/:year/:month/:day/:title.html
+
+   novels:
+     novel-dua:
+       title: Novel Dua
+       description: Deskripsi singkat novel ini.
+       source: https://contoh.com
+       path: /novel-dua/      # halaman daftar chapter
+       feed: /novel-dua/feed.xml
+   ```
+
+   `path` adalah URL halaman daftar chapter novel tersebut, `feed` URL feed Atom-nya.
+   Novel utama memakai `path: /` supaya beranda tetap menjadi daftar chapter-nya dan URL
+   chapter lama tidak berubah.
+
+3. Buat file halaman `<slug>.html` agar novel itu punya halaman daftar chapter:
+
+   ```yaml
+   ---
+   layout: novel
+   title: Novel Dua
+   description: Deskripsi singkat novel ini.
+   novel: novel-dua
+   permalink: /novel-dua/
+   wide: true
+   scripts:
+     - /assets/js/index.js
+   ---
+   ```
+
+4. Buat tracker-nya: `chapter/<slug>/done/` dan `chapter/<slug>/undone/`.
+5. Tambahkan chapter dengan nama file `YYYY-MM-DD-chapter-N.md` di `_<slug>/`.
+
+Novel otomatis muncul di sidebar (pemilih novel), di halaman `/novels/`, dan di section
+"Novel Lain" pada halaman daftar chapter.
+
 ## Menambahkan chapter
 
-1. Setelah selesai dikerjakan, pindahkan teks sumber dari `chapter/undone/` ke `chapter/done/`.
-2. Buat `_posts/YYYY-MM-DD-chapter-N.md` dengan front matter:
+1. Setelah selesai dikerjakan, pindahkan teks sumber dari `chapter/<slug>/undone/` ke
+   `chapter/<slug>/done/`.
+2. Buat `_<slug>/YYYY-MM-DD-chapter-N.md` dengan front matter:
 
    ```yaml
    ---
@@ -83,8 +134,8 @@ ruby script/check-links.rb _site
    * Pemisah antar adegan ditulis `* * *` dengan spasi biasa. Spasi non-breaking (`U+00A0`) membuat
      baris tersebut terbaca sebagai bullet list.
 
-4. Chapter otomatis muncul di daftar pada `index.html` dan mendapat navigasi chapter
-   sebelumnya/berikutnya.
+4. Chapter otomatis muncul di daftar chapter novel tersebut dan mendapat navigasi chapter
+   sebelumnya/berikutnya (dalam novel yang sama).
 
 ## Deployment
 

@@ -1,7 +1,7 @@
 # Project Overview
 
-This is a Jekyll-based website for a web novel translation project named "Subnovel". It is a
-standalone Jekyll site (no third-party theme) that serves translated chapters.
+This is a Jekyll-based website for web novel translations. It hosts **several novels**: every
+novel is a Jekyll collection with its own folder, chapter tracker, chapter list page and Atom feed.
 
 # Building and Running
 
@@ -14,16 +14,19 @@ The project uses Bundler to manage Ruby gem dependencies.
 
 # Development Conventions
 
-*   Jekyll posts are located in the `_posts` directory, following the `YYYY-MM-DD-chapter-N.md`
-    naming convention.
-*   Layouts are defined in the `_layouts` directory; the site uses a single `default` layout.
-*   Custom CSS is located in `assets/style.css`; the client-side script in `assets/js/scroll.js`.
+*   Every novel lives in its own collection folder `_<slug>/` and is registered in `_config.yml`
+    under `collections` (permalink) and `novels` (title, description, path, feed).
+*   The chapter tracker of a novel lives in `chapter/<slug>/done` and `chapter/<slug>/undone`.
+    Both folders are excluded from the build and must never be published.
+*   Layouts are defined in the `_layouts` directory: `default.html` (shell, sidebar, bottom bar)
+    and `novel.html` (chapter list page of one novel).
+*   Custom CSS is located in `assets/style.css`; the client-side scripts in `assets/js/`.
 *   `script/check-content.sh` enforces the markdown conventions below and runs in CI.
 
 ## Chapter posts
 
-Each post is one translated chapter and uses the `default` layout (applied automatically through the
-`defaults` entry in `_config.yml`).
+Each document is one translated chapter and uses the `default` layout (applied automatically through
+the `defaults` entry in `_config.yml`).
 
 *   Front matter carries `layout`, `title` and `date`. Every chapter shares the same placeholder
     date and encodes its serial order in the time part (chapter 241 -> `04:01`), so that the Atom
@@ -34,9 +37,6 @@ Each post is one translated chapter and uses the `default` layout (applied autom
     ordered list.
 *   Scene separators are written `* * *` with ordinary spaces; a non-breaking space makes kramdown
     parse them as a bullet list.
-*   `chapter/done/` holds the source text of published chapters, `chapter/undone/` the source text of
-    chapters that are still queued. Both folders are excluded from the build and must never be
-    published.
 
 # Deployment
 

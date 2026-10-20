@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {%- assign asset_version = site.time | date: '%s' -%}
     {%- assign is_chapter = false -%}
-    {%- if page.collection == 'posts' -%}{%- assign is_chapter = true -%}{%- endif -%}
+    {%- if page.collection and page.collection != 'posts' -%}{%- assign is_chapter = true -%}{%- endif -%}
+    {%- assign current_novel = page.novel -%}
+    {%- if is_chapter -%}{%- assign current_novel = page.collection -%}{%- endif -%}
+    {%- if current_novel == nil or current_novel == '' or site.novels[current_novel] == nil -%}
+        {%- assign current_novel = site.novels | first | first -%}
+    {%- endif -%}
+    {%- assign novel_meta = site.novels[current_novel] -%}
     {%- assign has_title = false -%}
     {%- if page.title and page.title != '' -%}{%- assign has_title = true -%}{%- endif -%}
     {%- assign page_title = page.title | default: site.title -%}
-    {%- if page.description and page.description != '' -%}
-        {%- assign page_description = page.description -%}
-    {%- elsif is_chapter -%}
-        {%- assign page_description = page.title | append: ' — ' | append: site.description -%}
-    {%- else -%}
-        {%- assign page_description = site.description -%}
+    {%- assign page_description = page.description | default: site.description -%}
+    {%- if page.novel and novel_meta -%}
+        {%- assign page_title = novel_meta.title -%}
+        {%- assign page_description = novel_meta.description -%}
     {%- endif -%}
-    <title>{% if has_title %}{{ page_title | escape }} · {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+    {%- if is_chapter and page.description == nil -%}
+        {%- assign page_description = page.title | append: ' — ' | append: novel_meta.description -%}
+    {%- endif -%}
+    <title>{% if has_title or page.novel %}{{ page_title | escape }} · {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
     <meta name="description" content="{{ page_description | strip_html | normalize_whitespace | truncate: 180 | escape }}">
     <link rel="canonical" href="{{ page.url | absolute_url }}">
     <meta property="og:type" content="{% if is_chapter %}article{% else %}website{% endif %}">
@@ -43,7 +50,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}?v={{ asset_version }}">
     <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}?v={{ asset_version }}" type="image/svg+xml">
-    <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
+    {%- if novel_meta.feed %}
+    <link rel="alternate" type="application/atom+xml" title="{{ novel_meta.title | escape }}" href="{{ novel_meta.feed | relative_url }}">
+    {%- endif %}
 </head>
 <body>
     <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
@@ -51,11 +60,31 @@
     <main id="main-content" tabindex="-1" class="container{% if is_chapter %} chapter-page{% elsif page.wide %} container--wide{% else %} site-page{% endif %}">
         {%- if is_chapter %}
         <article class="chapter">
+            {%- if novel_meta %}
+            <a class="chapter-novel" href="{{ novel_meta.path | relative_url }}">{{ novel_meta.title }}</a>
+            {%- endif %}
             {%- if has_title %}
             <h1 class="chapter-heading">{{ page.title | escape }}</h1>
             {%- endif %}
             {{ content }}
         </article>
+
+        {%- if page.previous or page.next %}
+        <nav class="post-navigation" aria-label="Navigasi chapter">
+            {%- if page.previous %}
+            <a class="nav-link nav-link--previous" href="{{ page.previous.url | relative_url }}" rel="prev">
+                <span class="nav-direction">&larr; Chapter sebelumnya</span>
+                <span class="nav-title">{{ page.previous.title | escape }}</span>
+            </a>
+            {%- endif %}
+            {%- if page.next %}
+            <a class="nav-link nav-link--next" href="{{ page.next.url | relative_url }}" rel="next">
+                <span class="nav-direction">Chapter berikutnya &rarr;</span>
+                <span class="nav-title">{{ page.next.title | escape }}</span>
+            </a>
+            {%- endif %}
+        </nav>
+        {%- endif %}
         {%- else %}
         {{ content }}
         {%- endif %}
@@ -74,17 +103,25 @@
             </button>
         </header>
 
-        <a class="sidebar-home" href="{{ '/' | relative_url }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <path d="M9 22V12h6v10"></path>
-            </svg>
-            Beranda
-        </a>
+        <ul class="sidebar-novels">
+            {%- for pair in site.novels %}
+            {%- assign slug = pair[0] -%}
+            {%- assign meta = pair[1] -%}
+            <li>
+                <a class="sidebar-novel{% if slug == current_novel %} is-active{% endif %}" href="{{ meta.path | relative_url }}">
+                    <span class="sidebar-novel-title">{{ meta.title | escape }}</span>
+                    <span class="sidebar-novel-count">{{ site[slug] | size }} chapter</span>
+                </a>
+            </li>
+            {%- endfor %}
+        </ul>
 
         <nav class="sidebar-nav" aria-label="Navigasi chapter">
+            <p class="sidebar-heading">{{ novel_meta.title | escape }}</p>
+
             <ul class="sidebar-list" data-sidebar-list>
-                {%- for post in site.posts %}
+                {%- assign sidebar_chapters = site[current_novel] | reverse -%}
+                {%- for post in sidebar_chapters %}
                 {%- assign side_parts = post.title | split: ":" -%}
                 {%- assign side_first = side_parts | first -%}
                 {%- assign side_number = side_first | remove: "Chapter " | strip -%}
@@ -102,7 +139,6 @@
     </aside>
 
     {%- assign current_number = page.title | split: ":" | first | remove: "Chapter " | strip -%}
-    {%- assign latest_post = site.posts.first -%}
     <div class="bottom-bar{% if page.wide %} bottom-bar--wide{% endif %}" data-bottom-bar>
         <div class="bottom-bar-progress" role="progressbar" aria-label="Kemajuan baca" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-bottom-bar-progress>
             <span class="bottom-bar-fill" data-progress-fill></span>
@@ -119,18 +155,10 @@
                 </span>
             </a>
                 {%- endif %}
-            {%- elsif latest_post %}
-            <a class="bottom-bar-link bottom-bar-link--previous" href="{{ latest_post.url | relative_url }}">
-                <span class="bottom-bar-arrow" aria-hidden="true">&rarr;</span>
-                <span class="bottom-bar-text">
-                    <span class="bottom-bar-eyebrow">Terbaru</span>
-                    <span class="bottom-bar-title"><span class="bottom-bar-word">Chapter </span>{{ latest_post.title | split: ":" | first | remove: "Chapter " | strip | escape }}</span>
-                </span>
-            </a>
             {%- endif %}
 
             <button type="button" class="bottom-bar-current" data-sidebar-open aria-haspopup="dialog" aria-controls="chapterSidebar" aria-label="Pilih chapter">
-                <span class="bottom-bar-value">{% if is_chapter %}<span class="bottom-bar-word">Chapter </span>{{ current_number }}{% else %}{{ site.posts | size }} chapter{% endif %}<span class="bottom-bar-caret" aria-hidden="true">&#9662;</span></span>
+                <span class="bottom-bar-value">{% if is_chapter %}<span class="bottom-bar-word">Chapter </span>{{ current_number }}{% else %}{{ site[current_novel] | size }} chapter{% endif %}<span class="bottom-bar-caret" aria-hidden="true">&#9662;</span></span>
                 <span class="bottom-bar-percent" data-progress-label>0%</span>
             </button>
 

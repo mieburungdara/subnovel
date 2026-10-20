@@ -1,0 +1,140 @@
+---
+layout: default
+---
+
+{%- assign novel_docs = site[page.novel] -%}
+{%- assign novel_meta = site.novels[page.novel] -%}
+{%- assign chapters = novel_docs | reverse -%}
+{%- assign first_chapter = chapters | first -%}
+{%- assign last_chapter = chapters | last -%}
+
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-eyebrow">Terjemahan novel web</p>
+        <h1 class="hero-title">{{ novel_meta.title | escape }}</h1>
+        <p class="hero-lead">{{ novel_meta.description | escape }}</p>
+
+        <form class="hero-search" role="search" data-chapter-filter>
+            <label class="visually-hidden" for="chapter-search">Cari chapter berdasarkan nomor atau judul</label>
+            <svg class="hero-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-3.6-3.6"></path>
+            </svg>
+            <input id="chapter-search" type="search" placeholder="Cari chapter: nomor atau judul&hellip;" autocomplete="off" spellcheck="false" data-filter-input>
+            <kbd class="hero-search-hint" aria-hidden="true">/</kbd>
+        </form>
+
+        <div class="hero-actions">
+            {%- if first_chapter %}
+            <a class="button button--primary" href="{{ first_chapter.url | relative_url }}">
+                Baca chapter terbaru
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+            {%- endif %}
+            {%- if site.novels.size > 1 %}
+            <a class="button button--ghost" href="{{ '/novels/' | relative_url }}">Semua novel</a>
+            {%- endif %}
+        </div>
+
+        <dl class="hero-stats">
+            <div class="hero-stat">
+                <dt>Total chapter</dt>
+                <dd>{{ novel_docs | size }}</dd>
+            </div>
+            {%- if last_chapter %}
+            <div class="hero-stat">
+                <dt>Mulai dari</dt>
+                <dd>Chapter {{ last_chapter.title | split: ":" | first | remove: "Chapter " | strip }}</dd>
+            </div>
+            <div class="hero-stat">
+                <dt>Terbaru</dt>
+                <dd>Chapter {{ first_chapter.title | split: ":" | first | remove: "Chapter " | strip }}</dd>
+            </div>
+            {%- endif %}
+        </dl>
+    </div>
+
+    {%- if first_chapter %}
+    <article class="featured">
+        <div class="featured-body">
+            <p class="featured-eyebrow"><span class="dot" aria-hidden="true"></span>Chapter terbaru</p>
+            <h2 class="featured-title">{{ first_chapter.title | escape }}</h2>
+            <a class="featured-link" href="{{ first_chapter.url | relative_url }}">
+                Mulai membaca <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <p class="featured-number" aria-hidden="true">{{ first_chapter.title | split: ":" | first | remove: "Chapter " | strip }}</p>
+    </article>
+    {%- endif %}
+</section>
+
+<section class="chapter-section" id="daftar-chapter">
+    <header class="section-header">
+        <h2 class="section-title">Semua Chapter</h2>
+        <p class="section-count" data-filter-count aria-live="polite">{{ novel_docs | size }} chapter</p>
+    </header>
+
+    {%- if chapters.size > 0 %}
+    <ul class="chapter-list" data-filter-list>
+        {%- for post in chapters %}
+        {%- assign title_parts = post.title | split: ":" -%}
+        {%- assign first_part = title_parts | first -%}
+        {%- assign chapter_number = first_part | remove: "Chapter " | strip -%}
+        {%- assign chapter_name = post.title | remove_first: first_part | remove_first: ":" | strip -%}
+        {%- if chapter_name == "" -%}
+            {%- assign chapter_name = first_part -%}
+        {%- endif %}
+        <li class="chapter-item" style="--i: {{ forloop.index0 }}" data-chapter="{{ chapter_number }}" data-title="{{ chapter_name | escape }}">
+            <a href="{{ post.url | relative_url }}">
+                <span class="chapter-number"><span class="visually-hidden">Chapter </span>{{ chapter_number | escape }}</span>
+                <span class="chapter-name">{{ chapter_name | escape }}</span>
+                {%- if forloop.index <= 3 %}
+                <span class="chapter-badge">Baru</span>
+                {%- endif %}
+                <span class="chapter-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+        {%- endfor %}
+    </ul>
+
+    <p class="index-empty" data-filter-empty hidden>
+        Tidak ada chapter yang cocok dengan &ldquo;<span data-filter-query></span>&rdquo;.
+        <a href="#daftar-chapter" data-filter-reset>Reset pencarian</a>
+    </p>
+    {%- else %}
+    <p class="index-empty">Belum ada chapter yang dipublikasikan untuk novel ini.</p>
+    {%- endif %}
+</section>
+
+{%- if site.novels.size > 1 %}
+<section class="chapter-section">
+    <header class="section-header">
+        <h2 class="section-title">Novel Lain</h2>
+        <p class="section-count">{{ site.novels | size }} novel</p>
+    </header>
+
+    <ul class="novel-list">
+        {%- for pair in site.novels %}
+        {%- assign slug = pair[0] -%}
+        {%- assign meta = pair[1] -%}
+        {%- assign docs = site[slug] -%}
+        <li class="novel-item">
+            <a href="{{ meta.path | relative_url }}">
+                <span class="novel-cover" aria-hidden="true">{{ meta.title | slice: 0 | upcase }}</span>
+                <span class="novel-body">
+                    <span class="novel-title">{{ meta.title | escape }}</span>
+                    <span class="novel-description">{{ meta.description | escape }}</span>
+                    <span class="novel-meta">
+                        <span class="novel-count">{{ docs | size }} chapter</span>
+                        {%- if docs.size > 0 %}
+                        <span class="novel-latest">Terbaru: Chapter {{ docs.last.title | split: ":" | first | remove: "Chapter " | strip }}</span>
+                        {%- endif %}
+                    </span>
+                </span>
+                <span class="novel-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+        {%- endfor %}
+    </ul>
+</section>
+{%- endif %}
