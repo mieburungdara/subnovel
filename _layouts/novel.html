@@ -32,7 +32,7 @@ layout: default
             </a>
             {%- endif %}
             {%- if site.novels.size > 1 %}
-            <a class="button button--ghost" href="{{ '/novels/' | relative_url }}">Semua novel</a>
+            <a class="button button--ghost" href="{{ '/' | relative_url }}">Semua novel</a>
             {%- endif %}
         </div>
 
@@ -106,35 +106,3 @@ layout: default
     {%- endif %}
 </section>
 
-{%- if site.novels.size > 1 %}
-<section class="chapter-section">
-    <header class="section-header">
-        <h2 class="section-title">Novel Lain</h2>
-        <p class="section-count">{{ site.novels | size }} novel</p>
-    </header>
-
-    <ul class="novel-list">
-        {%- for pair in site.novels %}
-        {%- assign slug = pair[0] -%}
-        {%- assign meta = pair[1] -%}
-        {%- assign docs = site[slug] -%}
-        <li class="novel-item">
-            <a href="{{ meta.path | relative_url }}">
-                <span class="novel-cover" aria-hidden="true">{{ meta.title | slice: 0 | upcase }}</span>
-                <span class="novel-body">
-                    <span class="novel-title">{{ meta.title | escape }}</span>
-                    <span class="novel-description">{{ meta.description | escape }}</span>
-                    <span class="novel-meta">
-                        <span class="novel-count">{{ docs | size }} chapter</span>
-                        {%- if docs.size > 0 %}
-                        <span class="novel-latest">Terbaru: Chapter {{ docs.last.title | split: ":" | first | remove: "Chapter " | strip }}</span>
-                        {%- endif %}
-                    </span>
-                </span>
-                <span class="novel-arrow" aria-hidden="true">&rarr;</span>
-            </a>
-        </li>
-        {%- endfor %}
-    </ul>
-</section>
-{%- endif %}

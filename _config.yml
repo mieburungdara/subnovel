@@ -24,7 +24,7 @@ novels:
     title: Subnovel
     description: Terjemahan novel web Subnovel ke dalam bahasa Indonesia.
     source: https://fenriralm.com
-    path: /
+    path: /subnovel/
     feed: /feed.xml
   novel-dua:
     title: Novel Dua

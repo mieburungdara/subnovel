@@ -1,9 +1,95 @@
 ---
-layout: novel
-title: Daftar Chapter
-description: Daftar seluruh chapter Subnovel, diurutkan dari chapter terbaru.
-novel: subnovel
+layout: default
+title: Daftar Novel
+description: Kumpulan terjemahan novel web ke dalam bahasa Indonesia.
 wide: true
-scripts:
-  - /assets/js/index.js
 ---
+
+<section class="hero hero--center">
+    <div class="hero-content">
+        <p class="hero-eyebrow">Koleksi terjemahan</p>
+        <h1 class="hero-title">{{ site.title }}</h1>
+        <p class="hero-lead">{{ site.description }}</p>
+
+        {%- assign first_slug = "" -%}
+        {%- for pair in site.novels -%}
+            {%- if forloop.first -%}{%- assign first_slug = pair[0] -%}{%- endif -%}
+        {%- endfor -%}
+        {%- assign first_docs = site[first_slug] -%}
+        <div class="hero-actions">
+            {%- if first_docs.size > 0 %}
+            <a class="button button--primary" href="{{ first_docs.last.url | relative_url }}">
+                Baca chapter terbaru
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+            {%- endif %}
+        </div>
+
+        <dl class="hero-stats">
+            <div class="hero-stat">
+                <dt>Novel</dt>
+                <dd>{{ site.novels | size }}</dd>
+            </div>
+            <div class="hero-stat">
+                <dt>Total chapter</dt>
+                <dd>{% assign total = 0 %}{% for pair in site.novels %}{% assign total = total | plus: site[pair[0]] | size %}{% endfor %}{{ total }}</dd>
+            </div>
+        </dl>
+    </div>
+</section>
+
+<section class="chapter-section">
+    <header class="section-header">
+        <h2 class="section-title">Novel yang Diterjemahkan</h2>
+        <p class="section-count">{{ site.novels | size }} novel</p>
+    </header>
+
+    <ul class="novel-list">
+        {%- for pair in site.novels %}
+        {%- assign slug = pair[0] -%}
+        {%- assign meta = pair[1] -%}
+        {%- assign docs = site[slug] -%}
+        <li class="novel-item">
+            <a href="{{ meta.path | relative_url }}">
+                <span class="novel-cover" aria-hidden="true">{{ meta.title | slice: 0 | upcase }}</span>
+                <span class="novel-body">
+                    <span class="novel-title">{{ meta.title | escape }}</span>
+                    <span class="novel-description">{{ meta.description | escape }}</span>
+                    <span class="novel-meta">
+                        <span class="novel-count">{{ docs | size }} chapter</span>
+                        {%- if docs.size > 0 %}
+                        <span class="novel-latest">Terbaru: Chapter {{ docs.last.title | split: ":" | first | remove: "Chapter " | strip }}</span>
+                        {%- endif %}
+                    </span>
+                </span>
+                <span class="novel-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+        {%- endfor %}
+    </ul>
+</section>
+
+{%- for pair in site.novels %}
+{%- assign slug = pair[0] -%}
+{%- assign meta = pair[1] -%}
+{%- assign docs = site[slug] -%}
+{%- if docs.size > 0 %}
+<section class="chapter-section">
+    <header class="section-header">
+        <h2 class="section-title">{{ meta.title | escape }}</h2>
+        <p class="section-count">{{ docs | size }} chapter</p>
+    </header>
+
+    <article class="latest-card">
+        <div class="latest-body">
+            <p class="latest-eyebrow"><span class="dot" aria-hidden="true"></span>Chapter terbaru</p>
+            <h3 class="latest-title">{{ docs.last.title | escape }}</h3>
+            <a class="latest-link" href="{{ docs.last.url | relative_url }}">
+                Baca sekarang <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <a class="latest-all" href="{{ meta.path | relative_url }}">Semua chapter</a>
+    </article>
+</section>
+{%- endif %}
+{%- endfor %}

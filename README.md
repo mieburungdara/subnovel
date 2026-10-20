@@ -15,9 +15,8 @@ halaman daftar chapter, dan feed Atom-nya sendiri.
 | `chapter/<slug>/undone/` | Teks sumber chapter yang belum dipublikasikan |
 | `_layouts/default.html` | Layout utama: `<head>`, navigasi, sidebar, dan bottom bar |
 | `_layouts/novel.html` | Halaman daftar chapter sebuah novel (hero + pencarian) |
-| `index.html` | Beranda: daftar chapter novel utama |
-| `novels.html` | Halaman `/novels/` yang memuat seluruh novel |
-| `<slug>.html` | Halaman daftar chapter untuk novel tambahan |
+| `index.html` | Beranda: daftar seluruh novel + chapter terbaru tiap novel |
+| `<slug>.html` | Halaman daftar chapter sebuah novel |
 | `404.html` | Halaman "tidak ditemukan" |
 | `assets/style.css` | Seluruh gaya tampilan (light & dark mode, print) |
 | `assets/js/scroll.js` | Bottom bar: progres baca, navigasi cepat, dan gulir otomatis |
@@ -65,8 +64,8 @@ ruby script/check-links.rb _site
    ```
 
    `path` adalah URL halaman daftar chapter novel tersebut, `feed` URL feed Atom-nya.
-   Novel utama memakai `path: /` supaya beranda tetap menjadi daftar chapter-nya dan URL
-   chapter lama tidak berubah.
+   Halaman daftar chapter tiap novel memakai URL `/<slug>/`, sedangkan chapter-nya memakai
+   permalink di atas supaya URL chapter lama tidak berubah.
 
 3. Buat file halaman `<slug>.html` agar novel itu punya halaman daftar chapter:
 
