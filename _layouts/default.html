@@ -68,23 +68,6 @@
             {%- endif %}
             {{ content }}
         </article>
-
-        {%- if page.previous or page.next %}
-        <nav class="post-navigation" aria-label="Navigasi chapter">
-            {%- if page.previous %}
-            <a class="nav-link nav-link--previous" href="{{ page.previous.url | relative_url }}" rel="prev">
-                <span class="nav-direction">&larr; Chapter sebelumnya</span>
-                <span class="nav-title">{{ page.previous.title | escape }}</span>
-            </a>
-            {%- endif %}
-            {%- if page.next %}
-            <a class="nav-link nav-link--next" href="{{ page.next.url | relative_url }}" rel="next">
-                <span class="nav-direction">Chapter berikutnya &rarr;</span>
-                <span class="nav-title">{{ page.next.title | escape }}</span>
-            </a>
-            {%- endif %}
-        </nav>
-        {%- endif %}
         {%- else %}
         {{ content }}
         {%- endif %}
