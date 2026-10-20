@@ -11,10 +11,11 @@ Website terjemahan novel web "Subnovel" ([fenriralm.com](https://fenriralm.com))
 | `chapter/done/` | Teks sumber chapter yang sudah selesai dikerjakan |
 | `chapter/undone/` | Teks sumber chapter yang belum dipublikasikan |
 | `_layouts/default.html` | Layout utama: `<head>`, navigasi chapter, dan tombol gulir |
-| `index.html` | Daftar chapter, diurutkan dari yang terbaru |
+| `index.html` | Halaman utama: hero, pencarian chapter, dan grid chapter |
 | `404.html` | Halaman "tidak ditemukan" |
 | `assets/style.css` | Seluruh gaya tampilan (light & dark mode, print) |
 | `assets/js/scroll.js` | Tombol pintasan gulir ke atas/bawah |
+| `assets/js/index.js` | Pencarian chapter di halaman utama |
 | `assets/favicon.svg`, `assets/og-image.png` | Ikon situs & gambar pratinjau media sosial |
 | `script/check-links.rb` | Pemeriksa tautan internal pada hasil build |
 | `script/check-content.sh` | Pemeriksaan konvensi markdown chapter |
