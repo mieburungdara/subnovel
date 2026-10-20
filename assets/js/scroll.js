@@ -18,9 +18,9 @@
         return;
     }
 
-    var SPEEDS = [35, 80, 180];
-    var SPEED_LABELS = ["1\u00d7", "2\u00d7", "4\u00d7"];
-    var SPEED_NAMES = ["lambat", "sedang", "cepat"];
+    var SPEEDS = [35, 52, 80, 180];
+    var SPEED_LABELS = ["1\u00d7", "1.5\u00d7", "2\u00d7", "4\u00d7"];
+    var SPEED_NAMES = ["lambat", "sedang", "cepat", "sangat cepat"];
 
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     var ticking = false;
@@ -95,7 +95,7 @@
         if (speedButton) {
             speedButton.setAttribute(
                 "aria-label",
-                "Kecepatan gulir otomatis " + (speedIndex + 1) + " kali, " + SPEED_NAMES[speedIndex]
+                "Kecepatan gulir otomatis " + SPEED_LABELS[speedIndex] + ", " + SPEED_NAMES[speedIndex]
             );
         }
     }
